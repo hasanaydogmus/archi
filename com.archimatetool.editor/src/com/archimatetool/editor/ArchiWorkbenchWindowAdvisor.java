@@ -5,6 +5,8 @@
  */
 package com.archimatetool.editor;
 
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 
 import org.eclipse.swt.widgets.Display;
@@ -65,6 +67,10 @@ extends WorkbenchWindowAdvisor {
         
         // Load user fonts
         loadFonts(ArchiPlugin.INSTANCE.getUserFontsFolder());
+        
+        // Load AWT fonts
+        loadFontsForAWT(ArchiPlugin.INSTANCE.getLocalFontsFolder());
+        loadFontsForAWT(ArchiPlugin.INSTANCE.getUserFontsFolder());
     }
 
     // Scan a folder looking for fonts and load them
@@ -77,4 +83,26 @@ extends WorkbenchWindowAdvisor {
             }
         }
     }
+
+    /**
+     * Load user fonts into AWT for SVG/PDF image export
+     * Only needed for Windows. Mac doesn't need it and does nothing on Linux.
+     */
+    private void loadFontsForAWT(File fontFolder) {
+        if(fontFolder.exists()) {
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            
+            for(File file : fontFolder.listFiles()) {
+                if(file.isFile()) {
+                    try {
+                        Font font = Font.createFont(Font.TRUETYPE_FONT, file);
+                        ge.registerFont(font);
+                    }
+                    catch(Exception ex) {
+                    }
+                }
+            }
+        }
+    }
+
 }
