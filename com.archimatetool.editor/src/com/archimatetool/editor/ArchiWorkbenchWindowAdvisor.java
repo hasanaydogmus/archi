@@ -18,6 +18,7 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import com.archimatetool.editor.actions.ArchiActionBarAdvisor;
 import com.archimatetool.editor.preferences.IPreferenceConstants;
 import com.archimatetool.editor.preferences.Preferences;
+import com.archimatetool.editor.utils.PlatformUtils;
 
 
 
@@ -62,15 +63,19 @@ extends WorkbenchWindowAdvisor {
     }
     
     private void loadFonts() {
+        // Load AWT fonts
+        // This is needed for Windows for SVG export, but not for Mac
+        // Linux will load them if we load them *before* loading then into SWT but they still don't work for SVG
+        if(!PlatformUtils.isMac()) {
+            loadFontsForAWT(ArchiPlugin.INSTANCE.getLocalFontsFolder());
+            loadFontsForAWT(ArchiPlugin.INSTANCE.getUserFontsFolder());
+        }
+
         // Load fonts in local fonts folder
         loadFonts(ArchiPlugin.INSTANCE.getLocalFontsFolder());
         
         // Load user fonts
         loadFonts(ArchiPlugin.INSTANCE.getUserFontsFolder());
-        
-        // Load AWT fonts
-        loadFontsForAWT(ArchiPlugin.INSTANCE.getLocalFontsFolder());
-        loadFontsForAWT(ArchiPlugin.INSTANCE.getUserFontsFolder());
     }
 
     // Scan a folder looking for fonts and load them
