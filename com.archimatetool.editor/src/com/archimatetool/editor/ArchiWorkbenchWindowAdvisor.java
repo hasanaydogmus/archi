@@ -49,7 +49,6 @@ extends WorkbenchWindowAdvisor {
     
     @Override
     public void preWindowOpen() {
-        // Load user fonts here
         loadFonts();
     }
     
@@ -70,7 +69,12 @@ extends WorkbenchWindowAdvisor {
             loadFontsForAWT(ArchiPlugin.INSTANCE.getLocalFontsFolder());
             loadFontsForAWT(ArchiPlugin.INSTANCE.getUserFontsFolder());
         }
-
+        
+        // Load Windows fonts installed for user, not system
+        if(PlatformUtils.isWindows()) {
+            loadFontsForAWT(new File(System.getProperty("user.home"), "AppData/Local/Microsoft/Windows/Fonts")); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        
         // Load fonts in local fonts folder
         loadFonts(ArchiPlugin.INSTANCE.getLocalFontsFolder());
         
